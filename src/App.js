@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import "./ClickerGame.css"; // Import the CSS file
+import "./ClickerGame.css";
 
 const ClickerGame = () => {
   const [coins, setCoins] = useState(0);
   const [monsterHP, setMonsterHP] = useState(10);
   const [clickDamage, setClickDamage] = useState(1);
-  const [dps, setDps] = useState(0); // New state for damage per second
+  const [dps, setDps] = useState(0); 
   const [upgradeCost, setUpgradeCost] = useState(10);
-  const [dpsUpgradeCost, setDpsUpgradeCost] = useState(20); // Cost for DPS upgrade
+  const [dpsUpgradeCost, setDpsUpgradeCost] = useState(20); 
 
   const handleMonsterClick = () => {
     setMonsterHP((prevHP) => {
@@ -15,7 +15,7 @@ const ClickerGame = () => {
       console.log(newHP);
       if (newHP <= 0) {
         setCoins((prevCoins) => prevCoins + 10);
-        return 10; // Reset monster HP
+        return 10;
       }
       return newHP;
     });
@@ -41,20 +41,19 @@ const ClickerGame = () => {
     }
   };
 
-  // Use useEffect to handle damage over time (DPS)
   useEffect(() => {
     const dpsInterval = setInterval(() => {
       setMonsterHP((prevHP) => {
         const newHP = prevHP - dps;
         if (newHP <= 0) {
           setCoins((prevCoins) => prevCoins + 10);
-          return 10; // Reset monster HP
+          return 10; 
         }
         return newHP;
       });
-    }, 1000); // 1000 milliseconds = 1 second
+    }, 1000);
 
-    return () => clearInterval(dpsInterval); // Cleanup interval on component unmount
+    return () => clearInterval(dpsInterval);
   }, [dps]);
 
   return (
