@@ -1,68 +1,118 @@
 import React, { useState, useEffect } from "react";
-import "./ClickerGame.css"; // Import the CSS file
+import "./ClickerGame.css";
 
 const ClickerGame = () => {
-  const [coins, setCoins] = useState(0);
-  const [monsterHP, setMonsterHP] = useState(10);
-  const [clickDamage, setClickDamage] = useState(1);
-  const [dps, setDps] = useState(0); // New state for damage per second
-  const [upgradeCost, setUpgradeCost] = useState(10);
-  const [dpsUpgradeCost, setDpsUpgradeCost] = useState(20); // Cost for DPS upgrade
+  const [gameData, setGameData] = useState({
+    coins: 0,
+    monsterHP: 10,
+    clickDamage: 1,
+    dps: 0,
+    upgradeCost: 10,
+    dpsUpgradeCost: 20,
+  });
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/clicker-game")
+      .then((response) => response.json())
+      .then((data) => setGameData(data))
+      .catch((error) => console.error("Error fetching game data:", error));
+  }, []);
+
+  useEffect(() => {
+    const handleDpsAttack = () => {
+      setGameData((prevData) => {
+        const newMonsterHP = prevData.monsterHP - prevData.dps;
+        console.log("DPS Attack! New Monster HP:", newMonsterHP);
+        if (newMonsterHP <= 0) {
+          const newCoins = prevData.coins + 10;
+          console.log("Monster killed by DPS! Coins earned:", newCoins);
+          return { ...prevData, coins: newCoins, monsterHP: 10 };
+        }
+        return { ...prevData, monsterHP: newMonsterHP };
+      });
+    };
+
+    const dpsInterval = setInterval(() => {
+      handleDpsAttack();
+    }, 1000);
+
+    return () => clearInterval(dpsInterval);
+  }, []); 
+
+  const updateGameData = (updatedData) => {
+    fetch("http://localhost:5000/api/clicker-game", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedData),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log("Game data updated successfully:", data))
+      .catch((error) => console.error("Error updating game data:", error));
+  };
 
   const handleMonsterClick = () => {
-    setMonsterHP((prevHP) => {
-      const newHP = prevHP - clickDamage;
-      console.log(newHP);
-      if (newHP <= 0) {
-        setCoins((prevCoins) => prevCoins + 10);
-        return 10; // Reset monster HP
+    setGameData((prevData) => {
+      const newMonsterHP = prevData.monsterHP - prevData.clickDamage;
+      console.log("New Monster HP:", newMonsterHP);
+      if (newMonsterHP <= 0) {
+        const newCoins = prevData.coins + 10;
+        console.log("Monster killed! Coins earned:", newCoins);
+        return { ...prevData, coins: newCoins, monsterHP: 10 };
       }
-      return newHP;
+      return { ...prevData, monsterHP: newMonsterHP };
     });
   };
 
   const handleUpgrade = () => {
-    if (coins >= upgradeCost) {
-      setCoins((prevCoins) => prevCoins - upgradeCost);
-      setClickDamage((prevDamage) => prevDamage + 1);
-      setUpgradeCost((prevCost) => prevCost * 2);
+    if (gameData.coins >= gameData.upgradeCost) {
+      setGameData((prevData) => {
+        const newCoins = prevData.coins - prevData.upgradeCost;
+        const newClickDamage = prevData.clickDamage + 1;
+        const newUpgradeCost = prevData.upgradeCost * 2;
+
+        return {
+          ...prevData,
+          coins: newCoins,
+          clickDamage: newClickDamage,
+          upgradeCost: newUpgradeCost,
+        };
+      });
     } else {
       alert("Not enough coins to buy the upgrade!");
     }
   };
 
   const handleDpsUpgrade = () => {
-    if (coins >= dpsUpgradeCost) {
-      setCoins((prevCoins) => prevCoins - dpsUpgradeCost);
-      setDps((prevDps) => prevDps + 1);
-      setDpsUpgradeCost((prevCost) => prevCost * 2);
+    if (gameData.coins >= gameData.dpsUpgradeCost) {
+      setGameData((prevData) => {
+        const newCoins = prevData.coins - prevData.dpsUpgradeCost;
+        const newDps = prevData.dps + 1;
+        const newDpsUpgradeCost = prevData.dpsUpgradeCost * 2;
+
+        return {
+          ...prevData,
+          coins: newCoins,
+          dps: newDps,
+          dpsUpgradeCost: newDpsUpgradeCost,
+        };
+      });
     } else {
       alert("Not enough coins to buy the DPS upgrade!");
     }
   };
 
-  // Use useEffect to handle damage over time (DPS)
-  useEffect(() => {
-    const dpsInterval = setInterval(() => {
-      setMonsterHP((prevHP) => {
-        const newHP = prevHP - dps;
-        if (newHP <= 0) {
-          setCoins((prevCoins) => prevCoins + 10);
-          return 10; // Reset monster HP
-        }
-        return newHP;
-      });
-    }, 1000); // 1000 milliseconds = 1 second
-
-    return () => clearInterval(dpsInterval); // Cleanup interval on component unmount
-  }, [dps]);
+  const handleSaveToDatabase = () => {
+    updateGameData(gameData);
+  };
 
   return (
     <div>
       <div style={{ textAlign: "center" }}>
         <h1>Clicker Game</h1>
-        <p>Coins: {coins}</p>
-        <p>Monster HP: {monsterHP}</p>
+        <p>Coins: {gameData.coins}</p>
+        <p>Monster HP: {gameData.monsterHP}</p>
         <br />
         <img
           src={process.env.PUBLIC_URL + "/img/monster.png"}
@@ -71,13 +121,15 @@ const ClickerGame = () => {
           onClick={handleMonsterClick}
         />
         <br />
-        <p>Click Damage: {clickDamage}</p>
-        <p>Upgrade Cost: {upgradeCost} coins</p>
+        <p>Click Damage: {gameData.clickDamage}</p>
+        <p>Upgrade Cost: {gameData.upgradeCost} coins</p>
         <button onClick={handleUpgrade}>Upgrade</button>
         <br />
-        <p>Damage Per Second: {dps}</p>
-        <p>DPS Upgrade Cost: {dpsUpgradeCost} coins</p>
+        <p>Damage Per Second: {gameData.dps}</p>
+        <p>DPS Upgrade Cost: {gameData.dpsUpgradeCost} coins</p>
         <button onClick={handleDpsUpgrade}>Upgrade DPS</button>
+        <br />
+        <button onClick={handleSaveToDatabase}>Save to Database</button>
       </div>
     </div>
   );
