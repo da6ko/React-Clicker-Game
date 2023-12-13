@@ -108,19 +108,9 @@ const ClickerGame = () => {
   };
 
   return (
-    <div>
-      <div style={{ textAlign: "center" }}>
-        <h1>Clicker Game</h1>
-        <p>Coins: {gameData.coins}</p>
-        <p>Monster HP: {gameData.monsterHP}</p>
-        <br />
-        <img
-          src={process.env.PUBLIC_URL + "/img/monster.png"}
-          alt="Monster"
-          style={{ maxWidth: "200px", maxHeight: "200px", cursor: "pointer" }}
-          onClick={handleMonsterClick}
-        />
-        <br />
+    <div className="body">
+      <div className="upgrades">
+        <h2>Upgrades</h2>
         <p>Click Damage: {gameData.clickDamage}</p>
         <p>Upgrade Cost: {gameData.upgradeCost} coins</p>
         <button onClick={handleUpgrade}>Upgrade</button>
@@ -131,8 +121,21 @@ const ClickerGame = () => {
         <br />
         <button onClick={handleSaveToDatabase}>Save to Database</button>
       </div>
+      <div className="game-container">
+        <h1>Clicker Game</h1>
+        <p>Coins: {gameData.coins}</p>
+        <p>Monster HP: {gameData.monsterHP}</p>
+        <img
+          src={process.env.PUBLIC_URL + "/img/monster.png"}
+          alt="Monster"
+          style={{ maxWidth: "200px", maxHeight: "200px", cursor: "pointer" }}
+          onClick={handleMonsterClick}
+        />
+      </div>
     </div>
   );
-};
+  
+  
+  };  
 
 export default ClickerGame;
