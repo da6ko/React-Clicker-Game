@@ -8,7 +8,8 @@ const ClickerGame = () => {
     clickDamage: 1,
     dps: 0,
     upgradeCost: 10,
-    dpsUpgradeCost: 20,
+    dpsUpgradeCost1: 20,
+    dpsUpgradeCost2: 40,
   });
 
   useEffect(() => {
@@ -85,17 +86,36 @@ const ClickerGame = () => {
   };
 
   const handleDpsUpgrade = () => {
-    if (gameData.coins >= gameData.dpsUpgradeCost) {
+    if (gameData.coins >= gameData.dpsUpgradeCost1) {
       setGameData((prevData) => {
-        const newCoins = prevData.coins - prevData.dpsUpgradeCost;
+        const newCoins = prevData.coins - prevData.dpsUpgradeCost1;
         const newDps = prevData.dps + 1;
-        const newDpsUpgradeCost = prevData.dpsUpgradeCost * 2;
+        const newdpsUpgradeCost1 = prevData.dpsUpgradeCost1 * 2;
 
         return {
           ...prevData,
           coins: newCoins,
           dps: newDps,
-          dpsUpgradeCost: newDpsUpgradeCost,
+          dpsUpgradeCost1: newdpsUpgradeCost1,
+        };
+      });
+    } else {
+      alert("Not enough coins to buy the DPS upgrade!");
+    }
+  };
+
+  const handleDpsUpgrade2 = () => {
+    if (gameData.coins >= gameData.dpsUpgradeCost2) {
+      setGameData((prevData) => {
+        const newCoins = prevData.coins - prevData.dpsUpgradeCost2;
+        const newDps = prevData.dps + 3;
+        const newdpsUpgradeCost2 = prevData.dpsUpgradeCost2 * 2.5;
+
+        return {
+          ...prevData,
+          coins: newCoins,
+          dps: newDps,
+          dpsUpgradeCost2: newdpsUpgradeCost2,
         };
       });
     } else {
@@ -116,8 +136,11 @@ const ClickerGame = () => {
         <button onClick={handleUpgrade}>Upgrade</button>
         <br />
         <p>Damage Per Second: {gameData.dps}</p>
-        <p>DPS Upgrade Cost: {gameData.dpsUpgradeCost} coins</p>
+        <p>DPS Upgrade Cost: {gameData.dpsUpgradeCost1} coins</p>
         <button onClick={handleDpsUpgrade}>Upgrade DPS</button>
+        <br />
+        <p>DPS 2 Upgrade Cost: {gameData.dpsUpgradeCost2} coins</p>
+        <button onClick={handleDpsUpgrade2}>Upgrade DPS 2</button>
         <br />
         <button onClick={handleSaveToDatabase}>Save to Database</button>
       </div>
