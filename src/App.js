@@ -131,17 +131,21 @@ const ClickerGame = () => {
     <div className="body">
       <div className="upgrades">
         <h2>Upgrades</h2>
-        <p>Click Damage: {gameData.clickDamage}</p>
+        
         <p>Upgrade Cost: {gameData.upgradeCost} coins</p>
         <button onClick={handleUpgrade}>Upgrade</button>
         <br />
-        <p>Damage Per Second: {gameData.dps}</p>
+
         <p>DPS Upgrade Cost: {gameData.dpsUpgradeCost1} coins</p>
         <button onClick={handleDpsUpgrade}>Upgrade DPS</button>
         <br />
         <p>DPS 2 Upgrade Cost: {gameData.dpsUpgradeCost2} coins</p>
         <button onClick={handleDpsUpgrade2}>Upgrade DPS 2</button>
         <br />
+        <br></br>
+        <p>Click Damage: {gameData.clickDamage}</p>
+        <p>Damage Per Second: {gameData.dps}</p>
+        <br></br>
         <button onClick={handleSaveToDatabase}>Save to Database</button>
       </div>
       <div className="game-container">
