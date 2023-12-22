@@ -19,8 +19,12 @@ const clickerGameSchema = new mongoose.Schema({
   monsterHP: Number,
   clickDamage: Number,
   dps: Number,
-  upgradeCost: Number,
-  dpsUpgradeCost: Number,
+  upgradeHelmetCost: Number,
+  upgradeChestplateCost: Number,
+  upgradeLeggingsCost: Number,
+  upgradeBootsCost: Number,
+  upgradeWeaponCost: Number,
+  upgradeShieldCost: Number,
 });
 
 
