@@ -184,47 +184,55 @@ const ClickerGame = () => {
     updateGameData(gameData);
   };
 
+
+  const renderUpgrades = () => (
+    <div className="upgrades">
+      <h2>Upgrades</h2>
+
+      <p>Upgrade Helmet: {gameData.upgradeHelmetCost} coins</p>
+      <button onClick={handleHelmetUpgrade}>Upgrade</button>
+      <br />
+      <p>Upgrade Chestplate: {gameData.upgradeChestplateCost} coins</p>
+      <button onClick={handleChestplateUpgrade}>Upgrade</button>
+      <br />
+      <p>Upgrade Leggings: {gameData.upgradeLeggingsCost} coins</p>
+      <button onClick={handleLeggingsUpgrade}>Upgrade</button>
+      <br />
+      <p>Upgrade Boots: {gameData.upgradeBootsCost} coins</p>
+      <button onClick={handleBootsUpgrade}>Upgrade</button>
+      <br />
+
+      <p>Upgrade Weapon Cost: {gameData.upgradeWeaponCost} coins</p>
+      <button onClick={handleWeaponUpgrade}>Upgrade</button>
+      <br />
+      <p>Upgrade Shield Cost: {gameData.upgradeShieldCost} coins</p>
+      <button onClick={handleShieldUpgrade}>Upgrade</button>
+      <br />
+      <br></br>
+      <p>Click Damage: {gameData.clickDamage}</p>
+      <p>Damage Per Second: {gameData.dps}</p>
+      <br></br>
+      <button onClick={handleSaveToDatabase}>Save to Database</button>
+    </div>
+  );
+
+  const renderGameContainer = () => (
+    <div className="game-container">
+      <h1>Clicker Game</h1>
+      <p>Coins: {gameData.coins}</p>
+      <p>Monster HP: {gameData.monsterHP}</p>
+      <img
+        src={process.env.PUBLIC_URL + "/img/monster.png"}
+        alt="Monster"
+        style={{ maxWidth: "200px", maxHeight: "200px", cursor: "pointer" }}
+        onClick={handleMonsterClick}
+      />
+    </div>
+  );
   return (
     <div className="body">
-      <div className="upgrades">
-        <h2>Upgrades</h2>
-        
-        <p>Upgrade Helmet: {gameData.upgradeHelmetCost} coins</p>
-        <button onClick={handleHelmetUpgrade}>Upgrade</button>
-        <br />
-        <p>Upgrade Chestplate: {gameData.upgradeChestplateCost} coins</p>
-        <button onClick={handleChestplateUpgrade}>Upgrade</button>
-        <br />
-        <p>Upgrade Leggings: {gameData.upgradeLeggingsCost} coins</p>
-        <button onClick={handleLeggingsUpgrade}>Upgrade</button>
-        <br />
-        <p>Upgrade Boots: {gameData.upgradeBootsCost} coins</p>
-        <button onClick={handleBootsUpgrade}>Upgrade</button>
-        <br />
-        
-        <p>Upgrade Weapon Cost: {gameData.upgradeWeaponCost} coins</p>
-        <button onClick={handleWeaponUpgrade}>Upgrade</button>
-        <br />
-        <p>Upgrade Shield Cost: {gameData.upgradeShieldCost} coins</p>
-        <button onClick={handleShieldUpgrade}>Upgrade</button>
-        <br />
-        <br></br>
-        <p>Click Damage: {gameData.clickDamage}</p>
-        <p>Damage Per Second: {gameData.dps}</p>
-        <br></br>
-        <button onClick={handleSaveToDatabase}>Save to Database</button>
-      </div>
-      <div className="game-container">
-        <h1>Clicker Game</h1>
-        <p>Coins: {gameData.coins}</p>
-        <p>Monster HP: {gameData.monsterHP}</p>
-        <img
-          src={process.env.PUBLIC_URL + "/img/monster.png"}
-          alt="Monster"
-          style={{ maxWidth: "200px", maxHeight: "200px", cursor: "pointer" }}
-          onClick={handleMonsterClick}
-        />
-      </div>
+      {renderUpgrades()}
+      {renderGameContainer()}
     </div>
   );
   
