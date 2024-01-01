@@ -228,11 +228,17 @@ const ClickerGame = () => {
         onClick={handleMonsterClick}
       />
     </div>
+  )
+  const renderRightPanel = () => (
+        <div className="right-panel">
+          <h1>Settings</h1>
+        </div>
   );
   return (
     <div className="body">
       {renderUpgrades()}
       {renderGameContainer()}
+      {renderRightPanel()}
     </div>
   );
   

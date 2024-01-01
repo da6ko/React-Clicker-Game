@@ -7,23 +7,42 @@ body {
 
 .body {
   display: flex;
-  align-items: flex-start;
+  width: 100%;
+}
+
+.upgrades,
+.game-container,
+.right-panel {
+  width: 33.33%;
+  box-sizing: border-box;
+  padding: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align:top;
 }
 
 .upgrades {
   background-color: #f0f0f0;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
 }
 
 .game-container {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  margin-left: auto; 
+  background-color: #e0e0e0;
+}
+
+.right-panel {
+  background-color: #f0f0f0;
+}
+
+/* Align child elements to the top */
+.upgrades > * {
+  align-self: flex-start;
+}
+
+.game-container > * {
+  align-self: flex-start;
+}
+
+.right-panel > * {
+  align-self: flex-start;
 }
