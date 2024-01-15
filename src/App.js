@@ -211,8 +211,6 @@ const ClickerGame = () => {
       <br></br>
       <p>Click Damage: {gameData.clickDamage}</p>
       <p>Damage Per Second: {gameData.dps}</p>
-      <br></br>
-      <button onClick={handleSaveToDatabase}>Save to Database</button>
     </div>
   );
 
@@ -232,6 +230,8 @@ const ClickerGame = () => {
   const renderRightPanel = () => (
         <div className="right-panel">
           <h1>Settings</h1>
+          <br></br>
+        <button onClick={handleSaveToDatabase}>Save to Database</button>
         </div>
   );
   return (
