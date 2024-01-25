@@ -15,6 +15,16 @@ const ClickerGame = () => {
     upgradeShieldCost: 40,
   });
 
+  const [monsterImages] = useState([
+    "/img/monster.png",
+    "/img/monster2.png",
+    "/img/monster3.png",
+  ]);
+
+  const [currentMonsterImage, setCurrentMonsterImage] = useState(
+    monsterImages[0]
+  );
+
   useEffect(() => {
     fetch("http://localhost:5000/api/clicker-game")
       .then((response) => response.json())
@@ -26,22 +36,23 @@ const ClickerGame = () => {
     const handleDpsAttack = () => {
       setGameData((prevData) => {
         const newMonsterHP = prevData.monsterHP - prevData.dps;
-        console.log("DPS Attack! New Monster HP:", newMonsterHP);
         if (newMonsterHP <= 0) {
           const newCoins = prevData.coins + 10;
-          console.log("Monster killed by DPS! Coins earned:", newCoins);
+          const newMonsterImage =
+            monsterImages[Math.floor(Math.random() * monsterImages.length)];
+          setCurrentMonsterImage(newMonsterImage);
           return { ...prevData, coins: newCoins, monsterHP: 10 };
         }
         return { ...prevData, monsterHP: newMonsterHP };
       });
     };
-
+  
     const dpsInterval = setInterval(() => {
       handleDpsAttack();
     }, 1000);
-
+  
     return () => clearInterval(dpsInterval);
-  }, []); 
+  }, [monsterImages]);
 
   const updateGameData = (updatedData) => {
     fetch("http://localhost:5000/api/clicker-game", {
@@ -59,16 +70,17 @@ const ClickerGame = () => {
   const handleMonsterClick = () => {
     setGameData((prevData) => {
       const newMonsterHP = prevData.monsterHP - prevData.clickDamage;
-      console.log("New Monster HP:", newMonsterHP);
       if (newMonsterHP <= 0) {
         const newCoins = prevData.coins + 10;
-        console.log("Monster killed! Coins earned:", newCoins);
+        const newMonsterImage =
+          monsterImages[Math.floor(Math.random() * monsterImages.length)];
+        setCurrentMonsterImage(newMonsterImage);
         return { ...prevData, coins: newCoins, monsterHP: 10 };
       }
       return { ...prevData, monsterHP: newMonsterHP };
     });
   };
-  // DPS
+
   const handleHelmetUpgrade = () => {
     if (gameData.coins >= gameData.upgradeHelmetCost) {
       setGameData((prevData) => {
@@ -87,12 +99,14 @@ const ClickerGame = () => {
       alert("Not enough coins to buy the DPS upgrade!");
     }
   };
+
   const handleChestplateUpgrade = () => {
     if (gameData.coins >= gameData.upgradeChestplateCost) {
       setGameData((prevData) => {
         const newCoins = prevData.coins - prevData.upgradeChestplateCost;
         const newDps = prevData.dps + 4;
-        const newupgradeChestplateCost = prevData.upgradeChestplateCost * 2;
+        const newupgradeChestplateCost =
+          prevData.upgradeChestplateCost * 2;
 
         return {
           ...prevData,
@@ -105,6 +119,7 @@ const ClickerGame = () => {
       alert("Not enough coins to buy the DPS upgrade!");
     }
   };
+
   const handleLeggingsUpgrade = () => {
     if (gameData.coins >= gameData.upgradeLeggingsCost) {
       setGameData((prevData) => {
@@ -123,6 +138,7 @@ const ClickerGame = () => {
       alert("Not enough coins to buy the DPS upgrade!");
     }
   };
+
   const handleBootsUpgrade = () => {
     if (gameData.coins >= gameData.upgradeBootsCost) {
       setGameData((prevData) => {
@@ -141,7 +157,7 @@ const ClickerGame = () => {
       alert("Not enough coins to buy the DPS upgrade!");
     }
   };
-  // DPC
+
   const handleWeaponUpgrade = () => {
     if (gameData.coins >= gameData.upgradeWeaponCost) {
       setGameData((prevData) => {
@@ -184,7 +200,6 @@ const ClickerGame = () => {
     updateGameData(gameData);
   };
 
-
   const renderUpgrades = () => (
     <div className="upgrades">
       <h2>Upgrades</h2>
@@ -219,20 +234,22 @@ const ClickerGame = () => {
       <p>Coins: {gameData.coins}</p>
       <p>Monster HP: {gameData.monsterHP}</p>
       <img
-        src={process.env.PUBLIC_URL + "/img/monster.png"}
+        src={process.env.PUBLIC_URL + currentMonsterImage}
         alt="Monster"
         style={{ maxWidth: "200px", maxHeight: "200px", cursor: "pointer" }}
         onClick={handleMonsterClick}
       />
     </div>
-  )
-  const renderRightPanel = () => (
-        <div className="right-panel">
-          <h1>Settings</h1>
-          <br />
-        <button onClick={handleSaveToDatabase}>Save to Database</button>
-        </div>
   );
+
+  const renderRightPanel = () => (
+    <div className="right-panel">
+      <h1>Settings</h1>
+      <br />
+      <button onClick={handleSaveToDatabase}>Save to Database</button>
+    </div>
+  );
+
   return (
     <div className="body">
       {renderUpgrades()}
@@ -240,8 +257,6 @@ const ClickerGame = () => {
       {renderRightPanel()}
     </div>
   );
-  
-  
-  };  
+};
 
 export default ClickerGame;
