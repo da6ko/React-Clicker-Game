@@ -250,10 +250,17 @@ const ClickerGame = () => {
     </div>
   );
 
+  const space = () => (
+    <div className="background">
+    </div>
+  );
+
   return (
     <div className="body">
       {renderUpgrades()}
+      {space()}
       {renderGameContainer()}
+      {space()}
       {renderRightPanel()}
     </div>
   );

@@ -15,13 +15,22 @@ body {
 .right-panel {
   width: 33.33%;
   box-sizing: border-box;
-  padding: 70px;
+  padding: 170px;
   display: flex;
   flex-direction: column;
   align-items: center;
   vertical-align:top;
 }
 
+.background {
+  width: 33.33%;
+  box-sizing: border-box;
+  padding: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align:top;
+}
 .upgrades {
   background-color: #f0f0f0;
 }
