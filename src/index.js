@@ -1,8 +1,9 @@
+// index.js
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import ClickerGame from './App';
+import ClickerGame from './Components/ClickerGame'; // Updated import statement
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

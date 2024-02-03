@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from "react";
-import "./ClickerGame.css";
+import React, { useState } from 'react';
+import '../Css/ClickerGame.css';
+import MonsterImages from './MonsterImages';
+import DpsInterval from './DpsInterval';
+import GameDataUpdater from './GameDataUpdater';
 
 const ClickerGame = () => {
   const [gameData, setGameData] = useState({
@@ -15,44 +18,25 @@ const ClickerGame = () => {
     upgradeShieldCost: 40,
   });
 
-  const [monsterImages] = useState([
-    "/img/monster.png",
-    "/img/monster2.png",
-    "/img/monster3.png",
-  ]);
+  const monsterImages = MonsterImages();
 
   const [currentMonsterImage, setCurrentMonsterImage] = useState(
     monsterImages[0]
   );
 
-  useEffect(() => {
-    fetch("http://localhost:5000/api/clicker-game")
-      .then((response) => response.json())
-      .then((data) => setGameData(data))
-      .catch((error) => console.error("Error fetching game data:", error));
-  }, []);
-
-  useEffect(() => {
-    const handleDpsAttack = () => {
-      setGameData((prevData) => {
-        const newMonsterHP = prevData.monsterHP - prevData.dps;
-        if (newMonsterHP <= 0) {
-          const newCoins = prevData.coins + 10;
-          const newMonsterImage =
-            monsterImages[Math.floor(Math.random() * monsterImages.length)];
-          setCurrentMonsterImage(newMonsterImage);
-          return { ...prevData, coins: newCoins, monsterHP: 10 };
-        }
-        return { ...prevData, monsterHP: newMonsterHP };
-      });
-    };
-  
-    const dpsInterval = setInterval(() => {
-      handleDpsAttack();
-    }, 1000);
-  
-    return () => clearInterval(dpsInterval);
-  }, [monsterImages]);
+  const handleDpsAttack = () => {
+    setGameData((prevData) => {
+      const newMonsterHP = prevData.monsterHP - prevData.dps;
+      if (newMonsterHP <= 0) {
+        const newCoins = prevData.coins + 10;
+        const newMonsterImage =
+          monsterImages[Math.floor(Math.random() * monsterImages.length)];
+        setCurrentMonsterImage(newMonsterImage);
+        return { ...prevData, coins: newCoins, monsterHP: 10 };
+      }
+      return { ...prevData, monsterHP: newMonsterHP };
+    });
+  };
 
   const updateGameData = (updatedData) => {
     fetch("http://localhost:5000/api/clicker-game", {
@@ -225,7 +209,6 @@ const ClickerGame = () => {
       <br />
       <br />
     </div>
-    
   );
 
   const renderGameContainer = () => (
@@ -241,17 +224,6 @@ const ClickerGame = () => {
     </div>
   );
 
-  const renderRightPanel = () => (
-    <div className="right-panel">
-      <h1>Settings</h1>
-      <br />
-      <button onClick={handleSaveToDatabase}>Save to Database</button>
-      <br />
-      <p>Click Damage: {gameData.clickDamage}</p>
-      <p>Damage Per Second: {gameData.dps}</p>
-    </div>
-  );
-
   const space = () => (
     <div className="background">
     </div>
@@ -263,7 +235,9 @@ const ClickerGame = () => {
       {space()}
       {renderGameContainer()}
       {space()}
-      {renderRightPanel()}
+      <DpsInterval handleDpsAttack={handleDpsAttack} monsterImages={monsterImages} />
+      <GameDataUpdater gameData={gameData} updateGameData={updateGameData} />
+      {space()}
     </div>
   );
 };
