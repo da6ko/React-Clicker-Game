@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+// ClickerGame.js
+import React, { useState, useEffect } from 'react';
 import '../Css/ClickerGame.css';
-import MonsterImages from './MonsterImages';
-import DpsInterval from './DpsInterval';
-import GameDataUpdater from './GameDataUpdater';
 
 const ClickerGame = () => {
   const [gameData, setGameData] = useState({
@@ -18,28 +16,47 @@ const ClickerGame = () => {
     upgradeShieldCost: 40,
   });
 
-  const monsterImages = MonsterImages();
+  const [monsterImages] = useState([
+    "/img/monster.png",
+    "/img/monster2.png",
+    "/img/monster3.png",
+  ]);
 
   const [currentMonsterImage, setCurrentMonsterImage] = useState(
     monsterImages[0]
   );
 
-  const handleDpsAttack = () => {
-    setGameData((prevData) => {
-      const newMonsterHP = prevData.monsterHP - prevData.dps;
-      if (newMonsterHP <= 0) {
-        const newCoins = prevData.coins + 10;
-        const newMonsterImage =
-          monsterImages[Math.floor(Math.random() * monsterImages.length)];
-        setCurrentMonsterImage(newMonsterImage);
-        return { ...prevData, coins: newCoins, monsterHP: 10 };
-      }
-      return { ...prevData, monsterHP: newMonsterHP };
-    });
-  };
+  useEffect(() => {
+    fetch("http://localhost:8080/api/load-game-data")
+      .then((response) => response.json())
+      .then((data) => setGameData(data))
+      .catch((error) => console.error("Error loading game data:", error));
+  }, []);
+
+  useEffect(() => {
+    const handleDpsAttack = () => {
+      setGameData((prevData) => {
+        const newMonsterHP = prevData.monsterHP - prevData.dps;
+        if (newMonsterHP <= 0) {
+          const newCoins = prevData.coins + 10;
+          const newMonsterImage =
+            monsterImages[Math.floor(Math.random() * monsterImages.length)];
+          setCurrentMonsterImage(newMonsterImage);
+          return { ...prevData, coins: newCoins, monsterHP: 10 };
+        }
+        return { ...prevData, monsterHP: newMonsterHP };
+      });
+    };
+
+    const dpsInterval = setInterval(() => {
+      handleDpsAttack();
+    }, 1000);
+
+    return () => clearInterval(dpsInterval);
+  }, [monsterImages]);
 
   const updateGameData = (updatedData) => {
-    fetch("http://localhost:5000/api/clicker-game", {
+    fetch("http://localhost:8080/api/save-game-data", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -184,45 +201,75 @@ const ClickerGame = () => {
     updateGameData(gameData);
   };
 
-  const renderUpgrades = () => (
-    <div className="upgrades">
-      <h2>Upgrades</h2>
+  const renderUpgrades = () => {
+    if (!gameData) {
+      return null;
+    }
+  
+    return (
+      <div className="upgrades">
+        <h2>Upgrades</h2>
+  
+        <p>Upgrade Helmet: {gameData.upgradeHelmetCost} coins</p>
+        <button onClick={handleHelmetUpgrade}>Upgrade</button>
+        <br />
+        <p>Upgrade Chestplate: {gameData.upgradeChestplateCost} coins</p>
+        <button onClick={handleChestplateUpgrade}>Upgrade</button>
+        <br />
+        <p>Upgrade Leggings: {gameData.upgradeLeggingsCost} coins</p>
+        <button onClick={handleLeggingsUpgrade}>Upgrade</button>
+        <br />
+        <p>Upgrade Boots: {gameData.upgradeBootsCost} coins</p>
+        <button onClick={handleBootsUpgrade}>Upgrade</button>
+        <br />
+  
+        <p>Upgrade Weapon Cost: {gameData.upgradeWeaponCost} coins</p>
+        <button onClick={handleWeaponUpgrade}>Upgrade</button>
+        <br />
+        <p>Upgrade Shield Cost: {gameData.upgradeShieldCost} coins</p>
+        <button onClick={handleShieldUpgrade}>Upgrade</button>
+        <br />
+        <br />
+      </div>
+    );
+  };
 
-      <p>Upgrade Helmet: {gameData.upgradeHelmetCost} coins</p>
-      <button onClick={handleHelmetUpgrade}>Upgrade</button>
-      <br />
-      <p>Upgrade Chestplate: {gameData.upgradeChestplateCost} coins</p>
-      <button onClick={handleChestplateUpgrade}>Upgrade</button>
-      <br />
-      <p>Upgrade Leggings: {gameData.upgradeLeggingsCost} coins</p>
-      <button onClick={handleLeggingsUpgrade}>Upgrade</button>
-      <br />
-      <p>Upgrade Boots: {gameData.upgradeBootsCost} coins</p>
-      <button onClick={handleBootsUpgrade}>Upgrade</button>
-      <br />
+  const renderGameContainer = () => {
+    if (!gameData) {
+      return null; // Return null or some loading indicator while data is being fetched
+    }
+  
+    return (
+      <div className="game-container">
+        <p>Coins: {gameData.coins}</p>
+        <p>Monster HP: {gameData.monsterHP}</p>
+        <img
+          src={process.env.PUBLIC_URL + currentMonsterImage}
+          alt="Monster"
+          style={{ maxWidth: "200px", maxHeight: "200px", cursor: "pointer" }}
+          onClick={handleMonsterClick}
+        />
+      </div>
+    );
+  };
+  
 
-      <p>Upgrade Weapon Cost: {gameData.upgradeWeaponCost} coins</p>
-      <button onClick={handleWeaponUpgrade}>Upgrade</button>
-      <br />
-      <p>Upgrade Shield Cost: {gameData.upgradeShieldCost} coins</p>
-      <button onClick={handleShieldUpgrade}>Upgrade</button>
-      <br />
-      <br />
-    </div>
-  );
-
-  const renderGameContainer = () => (
-    <div className="game-container">
-      <p>Coins: {gameData.coins}</p>
-      <p>Monster HP: {gameData.monsterHP}</p>
-      <img
-        src={process.env.PUBLIC_URL + currentMonsterImage}
-        alt="Monster"
-        style={{ maxWidth: "200px", maxHeight: "200px", cursor: "pointer" }}
-        onClick={handleMonsterClick}
-      />
-    </div>
-  );
+  const renderRightPanel = () => {
+    if (!gameData) {
+      return null; // or render a loading state
+    }
+  
+    return (
+      <div className="right-panel">
+        <h1>Settings</h1>
+        <br />
+        <button onClick={handleSaveToDatabase}>Save to Database</button>
+        <br />
+        <p>Click Damage: {gameData.clickDamage}</p>
+        <p>Damage Per Second: {gameData.dps}</p>
+      </div>
+    );
+  };
 
   const space = () => (
     <div className="background">
@@ -235,9 +282,7 @@ const ClickerGame = () => {
       {space()}
       {renderGameContainer()}
       {space()}
-      <DpsInterval handleDpsAttack={handleDpsAttack} monsterImages={monsterImages} />
-      <GameDataUpdater gameData={gameData} updateGameData={updateGameData} />
-      {space()}
+      {renderRightPanel()}
     </div>
   );
 };
