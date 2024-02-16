@@ -25,6 +25,34 @@ const ClickerGameContainer = () => {
   ]);
 
   const [currentMonsterImage, setCurrentMonsterImage] = useState(monsterImages[0]);
+  const [mana, setMana] = useState(10); 
+  const [fireballUsed, setFireballUsed] = useState(false);
+  const [fireballActive, setFireballActive] = useState(false);
+
+  useEffect(() => {
+    if (fireballActive) {
+      const timeout = setTimeout(() => {
+        setGameData(prevData => ({
+          ...prevData,
+          dps: prevData.dps / 2 // Revert DPS back to original value
+        }));
+        setFireballActive(false); // Reset fireball state
+      }, 20000); // 20 seconds
+      return () => clearTimeout(timeout);
+    }
+  }, [fireballActive]);
+
+  const handleFireballClick = () => {
+    if (mana >= 5 && !fireballUsed) {
+      setGameData(prevData => ({
+        ...prevData,
+        dps: prevData.dps * 2 // Double DPS
+      }));
+      setMana(mana - 5); // Deduct 5 mana
+      setFireballUsed(true); // Set fireball used to true
+      setFireballActive(true); // Activate fireball effect
+    }
+  };
 
   useEffect(() => {
     fetch("http://localhost:8080/api/load-game-data")
@@ -186,13 +214,13 @@ const ClickerGameContainer = () => {
     updateGameData(gameData);
   };
 
-  return (
+    return (
     <>
       {renderUpgrades(gameData, handleHelmetUpgrade, handleChestplateUpgrade, handleLeggingsUpgrade, handleBootsUpgrade, handleWeaponUpgrade, handleShieldUpgrade)}
       {Space()}
       {renderGameContainer(gameData, currentMonsterImage, handleMonsterClick)}
       {Space()}
-      {renderRightPanel(gameData, handleSaveToDatabase)}
+      {renderRightPanel(gameData, mana, handleSaveToDatabase, handleFireballClick, fireballUsed)}
     </>
   );
 };
