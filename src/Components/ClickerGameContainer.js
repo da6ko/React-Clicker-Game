@@ -10,13 +10,14 @@ const ClickerGameContainer = () => {
     monsterHP: 10,
     clickDamage: 1,
     dps: 0,
+    mana: 10,
     upgradeHelmetCost: 10,
     upgradeChestplateCost: 40,
     upgradeLeggingsCost: 30,
     upgradeBootsCost: 20,
     upgradeWeaponCost: 20,
     upgradeShieldCost: 40,
-  });
+  });;
 
   const [monsterImages] = useState([
     "/img/monster.png",
@@ -27,7 +28,6 @@ const ClickerGameContainer = () => {
   const [currentMonsterImage, setCurrentMonsterImage] = useState(monsterImages[0]);
 
   
-  const [mana, setMana] = useState(10); // Initialize mana to 10
   const [fireballUsed, setFireballUsed] = useState(false);
   const [fireballActive, setFireballActive] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -37,14 +37,14 @@ const ClickerGameContainer = () => {
       const timeout = setTimeout(() => {
         setGameData(prevData => ({
           ...prevData,
-          dps: prevData.dps / 2 // Revert DPS back to original value
+          dps: prevData.dps / 2
         }));
-        setFireballActive(false); // Reset fireball state
-        resetFireball(); // Call resetFireball when fireball effect ends
-      }, 20000); // 20 seconds
+        setFireballActive(false);
+        resetFireball();
+      }, 20000);
       const interval = setInterval(() => {
-        setTimeLeft(prevTime => Math.max(prevTime - 1, 0)); // Decrease time left by 1 second
-      }, 1000); // Update every second
+        setTimeLeft(prevTime => Math.max(prevTime - 1, 0));
+      }, 1000);
       return () => {
         clearTimeout(timeout);
         clearInterval(interval);
@@ -54,29 +54,39 @@ const ClickerGameContainer = () => {
 
   useEffect(() => {
     const manaInterval = setInterval(() => {
-      setMana(prevMana => Math.min(prevMana + 1, 10)); // Replenish mana by 1 per second, maximum 10
-    }, 1000); // Update every second
-    return () => clearInterval(manaInterval);
-  }, []);
-
-  const handleFireballClick = () => {
-    if (mana >= 5 && !fireballUsed) {
       setGameData(prevData => ({
         ...prevData,
-        dps: prevData.dps * 2 // Double DPS
+        mana: Math.min(prevData.mana + 1, 10) 
       }));
-      setMana(prevMana => prevMana - 5); // Deduct 5 mana
-      setFireballUsed(true); // Set fireball used to true
-      setFireballActive(true); // Activate fireball effect
-      setTimeLeft(20); // Reset time left to 20 seconds
+    }, 1000);
+  
+    return () => clearInterval(manaInterval);
+  }, []);
+  
+
+  const handleFireballClick = () => {
+    if (gameData.mana >= 5 && !gameData.fireballUsed) {
+      setGameData(prevData => ({
+        ...prevData,
+        dps: prevData.dps * 2, // Double DPS
+        mana: prevData.mana - 5, // Deduct 5 mana
+        fireballUsed: true, // Set fireball used to true
+      }));
+      setTimeout(() => {
+        setGameData(prevData => ({
+          ...prevData,
+          dps: prevData.dps / 2, // Revert DPS back to original value
+          fireballUsed: false, // Reset fireball used status after cooldown
+        }));
+      }, 20000); // 20 seconds
     }
   };
 
   const resetFireball = () => {
-    setFireballUsed(false); // Reset fireball usage after cooldown
+    setFireballUsed(false);
   };
 
-  console.log('Time left for fireball effect:', timeLeft);
+  //console.log('Time left for fireball effect:', timeLeft);
 
   useEffect(() => {
     fetch("http://localhost:8080/api/load-game-data")
@@ -244,7 +254,7 @@ const ClickerGameContainer = () => {
       {Space()}
       {renderGameContainer(gameData, currentMonsterImage, handleMonsterClick)}
       {Space()}
-      {renderRightPanel(gameData, mana, handleSaveToDatabase, handleFireballClick, fireballUsed)}
+      {renderRightPanel(gameData, handleSaveToDatabase, handleFireballClick)}
     </>
   );
 };

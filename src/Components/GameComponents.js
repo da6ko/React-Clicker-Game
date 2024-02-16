@@ -40,7 +40,7 @@ export const renderGameContainer = (gameData, currentMonsterImage, handleMonster
   </div>
 );
 
-export const renderRightPanel = (gameData, mana, handleSaveToDatabase, handleFireballClick, fireballUsed) => (
+export const renderRightPanel = (gameData, handleSaveToDatabase, handleFireballClick) => (
   <div className="right-panel">
     <h1>Settings</h1>
     <br />
@@ -48,8 +48,8 @@ export const renderRightPanel = (gameData, mana, handleSaveToDatabase, handleFir
     <br />
     <p>Click Damage: {gameData.clickDamage}</p>
     <p>Damage Per Second: {gameData.dps}</p>
-    <p>Mana: {mana}</p>
-    <button disabled={fireballUsed || mana < 5} onClick={handleFireballClick}>
+    <p>Mana: {gameData.mana}</p>
+    <button disabled={gameData.fireballUsed || gameData.mana < 5} onClick={handleFireballClick}>
       Cast Fireball (Costs 5 Mana)
     </button>
   </div>
