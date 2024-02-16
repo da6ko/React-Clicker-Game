@@ -25,9 +25,12 @@ const ClickerGameContainer = () => {
   ]);
 
   const [currentMonsterImage, setCurrentMonsterImage] = useState(monsterImages[0]);
-  const [mana, setMana] = useState(10); 
+
+  
+  const [mana, setMana] = useState(10); // Initialize mana to 10
   const [fireballUsed, setFireballUsed] = useState(false);
   const [fireballActive, setFireballActive] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
     if (fireballActive) {
@@ -37,10 +40,24 @@ const ClickerGameContainer = () => {
           dps: prevData.dps / 2 // Revert DPS back to original value
         }));
         setFireballActive(false); // Reset fireball state
+        resetFireball(); // Call resetFireball when fireball effect ends
       }, 20000); // 20 seconds
-      return () => clearTimeout(timeout);
+      const interval = setInterval(() => {
+        setTimeLeft(prevTime => Math.max(prevTime - 1, 0)); // Decrease time left by 1 second
+      }, 1000); // Update every second
+      return () => {
+        clearTimeout(timeout);
+        clearInterval(interval);
+      };
     }
   }, [fireballActive]);
+
+  useEffect(() => {
+    const manaInterval = setInterval(() => {
+      setMana(prevMana => Math.min(prevMana + 1, 10)); // Replenish mana by 1 per second, maximum 10
+    }, 1000); // Update every second
+    return () => clearInterval(manaInterval);
+  }, []);
 
   const handleFireballClick = () => {
     if (mana >= 5 && !fireballUsed) {
@@ -48,11 +65,18 @@ const ClickerGameContainer = () => {
         ...prevData,
         dps: prevData.dps * 2 // Double DPS
       }));
-      setMana(mana - 5); // Deduct 5 mana
+      setMana(prevMana => prevMana - 5); // Deduct 5 mana
       setFireballUsed(true); // Set fireball used to true
       setFireballActive(true); // Activate fireball effect
+      setTimeLeft(20); // Reset time left to 20 seconds
     }
   };
+
+  const resetFireball = () => {
+    setFireballUsed(false); // Reset fireball usage after cooldown
+  };
+
+  console.log('Time left for fireball effect:', timeLeft);
 
   useEffect(() => {
     fetch("http://localhost:8080/api/load-game-data")
