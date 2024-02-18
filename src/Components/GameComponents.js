@@ -1,4 +1,5 @@
 import React from 'react';
+import '../Css/ClickerGame.css';
 
 export const renderUpgrades = (gameData, handleHelmetUpgrade, handleChestplateUpgrade, handleLeggingsUpgrade, handleBootsUpgrade, handleWeaponUpgrade, handleShieldUpgrade) => (
   <div className="upgrades">
@@ -49,11 +50,21 @@ export const renderRightPanel = (gameData, handleSaveToDatabase, handleFireballC
     <p>Click Damage: {gameData.clickDamage}</p>
     <p>Damage Per Second: {gameData.dps}</p>
     <p>Mana: {gameData.mana}</p>
-    <button disabled={gameData.fireballUsed || gameData.mana < 5} onClick={handleFireballClick}>
-      Cast Fireball (Costs 5 Mana)
-    </button>
+    <div className="tooltip">
+      <img
+        src="/fireball.png"
+        alt="Fireball"
+        className="fireball-image"
+        style={{ cursor: 'pointer', opacity: gameData.fireballUsed || gameData.mana < 5 ? 0.5 : 1 }}
+        onClick={handleFireballClick}
+      />
+      <span class="tooltiptext">Increase your DPS by 100%. Costs 5 mana.</span>
+    </div>
+    <p>Cast Fireball (Costs 5 Mana)</p>
   </div>
 );
+
+
 
 
 
