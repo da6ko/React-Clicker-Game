@@ -41,7 +41,7 @@ export const renderGameContainer = (gameData, currentMonsterImage, handleMonster
   </div>
 );
 
-export const renderRightPanel = (gameData, handleSaveToDatabase, handleFireballClick) => (
+export const renderRightPanel = (gameData, handleSaveToDatabase, handleFireballClick, handleThunderboltClick) => (
   <div className="right-panel">
     <h1>Settings</h1>
     <br />
@@ -61,6 +61,18 @@ export const renderRightPanel = (gameData, handleSaveToDatabase, handleFireballC
       <span class="tooltiptext">Increase your DPS by 100%. Costs 5 mana.</span>
     </div>
     <p>Cast Fireball (Costs 5 Mana)</p>
+    
+    <div className="tooltip">
+      <img
+        src="/thunderbolt.jpg"
+        alt="Thunderbolt"
+        className="thunderbolt-image"
+        style={{ cursor: 'pointer', opacity: gameData.mana < 10 ? 0.5 : 1 }}
+        onClick={handleThunderboltClick} 
+      />
+      <span class="tooltiptext">Deal massive damage to the monster. Costs 10 mana.</span>
+    </div>
+    <p>Cast Thunderbolt (Costs 10 Mana)</p>
   </div>
 );
 

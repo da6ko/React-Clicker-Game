@@ -63,22 +63,38 @@ const ClickerGameContainer = () => {
     return () => clearInterval(manaInterval);
   }, []);
   
+  const handleThunderboltClick = () => {
+    if (gameData.mana >= 10) {
+      const newMonsterHP = gameData.monsterHP - 20; // Adjust damage as needed
+      if (newMonsterHP <= 0) {
+        const newCoins = gameData.coins + 10;
+        const newMonsterImage = monsterImages[Math.floor(Math.random() * monsterImages.length)];
+        setCurrentMonsterImage(newMonsterImage);
+        setGameData({ ...gameData, coins: newCoins, monsterHP: 10, mana: gameData.mana - 10 });
+      } else {
+        setGameData({ ...gameData, monsterHP: newMonsterHP, mana: gameData.mana - 10 });
+      }
+    } else {
+      alert("Not enough mana to cast Thunderbolt!");
+    }
+  };
+  
 
   const handleFireballClick = () => {
     if (gameData.mana >= 5 && !gameData.fireballUsed) {
       setGameData(prevData => ({
         ...prevData,
-        dps: prevData.dps * 2, // Double DPS
-        mana: prevData.mana - 5, // Deduct 5 mana
-        fireballUsed: true, // Set fireball used to true
+        dps: prevData.dps * 2,
+        mana: prevData.mana - 5,
+        fireballUsed: true,
       }));
       setTimeout(() => {
         setGameData(prevData => ({
           ...prevData,
-          dps: prevData.dps / 2, // Revert DPS back to original value
-          fireballUsed: false, // Reset fireball used status after cooldown
+          dps: prevData.dps / 2, 
+          fireballUsed: false, 
         }));
-      }, 20000); // 20 seconds
+      }, 20000);
     }
   };
 
@@ -86,7 +102,7 @@ const ClickerGameContainer = () => {
     setFireballUsed(false);
   };
 
-  //console.log('Time left for fireball effect:', timeLeft);
+  console.log('Time left for fireball effect:', timeLeft);
 
   useEffect(() => {
     fetch("http://localhost:8080/api/load-game-data")
@@ -254,7 +270,7 @@ const ClickerGameContainer = () => {
       {Space()}
       {renderGameContainer(gameData, currentMonsterImage, handleMonsterClick)}
       {Space()}
-      {renderRightPanel(gameData, handleSaveToDatabase, handleFireballClick)}
+      {renderRightPanel(gameData, handleSaveToDatabase, handleFireballClick, handleThunderboltClick)}
     </>
   );
 };

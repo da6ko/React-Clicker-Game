@@ -57,16 +57,19 @@ p {
   width: 100px; 
   height: auto;
 }
+.thunderbolt-image {
+  width: 100px; 
+  height: auto;
+}
 
-/* styles.css */
 .tooltip {
   position: relative;
   display: inline-block;
 }
 
 .tooltip .fireball-image {
-  width: 100px; /* Adjust the width as needed */
-  height: auto; /* Maintain aspect ratio */
+  width: 100px;
+  height: auto; 
   cursor: pointer;
   opacity: 1;
 }
