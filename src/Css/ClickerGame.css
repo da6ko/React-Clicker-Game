@@ -54,20 +54,25 @@ p {
 }
 
 .fireball-image {
-  width: 100px; 
+  width: 50px; 
   height: auto;
 }
 .thunderbolt-image {
-  width: 100px; 
+  width: 50px; 
   height: auto;
 }
+.power-spike-image {
+  width: 50px; 
+  height: auto;
+}
+
 
 .tooltip {
   position: relative;
   display: inline-block;
 }
 
-.tooltip .fireball-image {
+.tooltip {
   width: 100px;
   height: auto; 
   cursor: pointer;
@@ -95,3 +100,24 @@ p {
   visibility: visible;
   opacity: 1;
 }
+
+
+.spells-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  /* Allow the container to grow to fit content */
+  flex-grow: 1;
+  /* Ensure the container does not shrink smaller than its content */
+  min-width: 0;
+  /* Center the spells horizontally */
+  justify-content: center;
+  /* Center the inline-block elements within the container */
+  text-align: center;
+}
+
+.spell {
+  flex: 0 0 auto;
+  min-width: 150px; /* Adjust the minimum width of each spell */
+}
+

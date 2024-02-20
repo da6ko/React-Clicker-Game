@@ -98,6 +98,24 @@ const ClickerGameContainer = () => {
     }
   };
 
+  const handlePowerSpikeClick = () => {
+    if (gameData.mana >= 10) {
+      setGameData(prevData => ({
+        ...prevData,
+        clickDamage: prevData.clickDamage * 2,
+        mana: prevData.mana - 10
+      }));
+      setTimeout(() => {
+        setGameData(prevData => ({
+          ...prevData,
+          clickDamage: prevData.clickDamage / 2
+        }));
+      }, 20000); // Reset click damage back to normal after 20 seconds
+    } else {
+      alert("Not enough mana to cast Power Spike!");
+    }
+  };
+
   const resetFireball = () => {
     setFireballUsed(false);
   };
@@ -270,7 +288,7 @@ const ClickerGameContainer = () => {
       {Space()}
       {renderGameContainer(gameData, currentMonsterImage, handleMonsterClick)}
       {Space()}
-      {renderRightPanel(gameData, handleSaveToDatabase, handleFireballClick, handleThunderboltClick)}
+      {renderRightPanel(gameData, handleSaveToDatabase, handleFireballClick, handleThunderboltClick, handlePowerSpikeClick)}
     </>
   );
 };
